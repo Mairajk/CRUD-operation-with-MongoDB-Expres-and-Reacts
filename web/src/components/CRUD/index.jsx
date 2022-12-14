@@ -1,11 +1,11 @@
 import './index.css';
 
 import axios from 'axios';
-import { useState } from 'react';
-
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useEffect } from 'react';
+import moment from 'moment';
+
+import { useState, useEffect } from 'react';
 
 let baseURL = '';
 if (window.location.href.split(':')[0] === 'http') {
@@ -23,6 +23,7 @@ const CRUD = () => {
     const [editingId, setEditingId] = useState(null);
     const [load, setLoad] = useState(false);
     const [editingData, setEditingData] = useState({});
+    const [searchText, setSearchText] = useState('');
 
     // const [deleteId, setDeleteId] = useState(null);
 
@@ -31,7 +32,7 @@ const CRUD = () => {
         axios.get(`${baseURL}/products`)
             .then((res) => {
                 console.log('response "all products" =========>: ', res.data);
-                setResponseProducts(res.data.data);
+                setResponseProducts(res.data.data.reverse());
                 console.log('responseProducts :', responseProducts);
             })
             .catch((err) => {
@@ -165,28 +166,55 @@ const CRUD = () => {
             console.log("this is editing handler");
             setIsEditing(false);
 
-            console.log(' This is deleteProduct');
-            console.log(editingData.id);
+            console.log(' This is update Product');
+            console.log(editingData._id);
 
-            axios.put(`${baseURL}/product/${editingData.id}`, {
+            axios.put(`${baseURL}/product/${editingData._id}`, {
                 name: updateValues.productName,
                 price: updateValues.price,
                 description: updateValues.description
             })
                 .then((res) => {
-                    console.log('delete response =====>', res);
+                    console.log('edit response =====>', res);
                     setLoad(!load);
                 })
                 .catch((err) => {
-                    console.log('delete Error =====>', err);
+                    console.log('edit Error =====>', err);
                 })
         }
     });
+
+    const search = (e) => {
+        e.preventDefault();
+
+        axios.get(`${baseURL}/products/${searchText}`)
+            .then((res) => {
+                console.log('response "all products" =========>: ', res.data);
+                // setResponseProducts(res.data.data.reverse());
+                // console.log('responseProducts :', responseProducts);
+            })
+            .catch((err) => {
+                console.log('Error: ', err);
+            })
+    }
 
 
     return (
         <div>
             <h1>CRUD Operation With Express and React</h1>
+
+            <form action="" on onSubmit={search}>
+                <input
+                    type="search"
+                    placeholder='Search products'
+                    name=""
+                    id=""
+                    onChange={(e) => {
+                        setSearchText(e.target.value)
+                    }}
+                />
+                <button type='submit'> Search</button>
+            </form>
 
             <button
                 className='addBtn'
@@ -257,8 +285,18 @@ const CRUD = () => {
                         return (
                             <div className="eachProduct" key={i}>
 
+                                <p> {moment(eachProduct.date).fromNow()}</p>
+
+                                {/* {
+                                    setInterval(() => {
+                                        return (
+                                            <p> {moment(eachProduct.date).fromNow()}</p>
+                                        )
+                                    }, 1000)
+                                } */}
+
                                 {
-                                    (isEditing && eachProduct.id === editingData.id) ?
+                                    (isEditing && eachProduct._id === editingData._id) ?
 
                                         <div className="editingProduct">
                                             <form onSubmit={updateFormik.handleSubmit}>
@@ -333,7 +371,7 @@ const CRUD = () => {
 
                                             <button className="delete"
                                                 onClick={() => {
-                                                    deleteProduct(eachProduct.id);
+                                                    deleteProduct(eachProduct._id);
                                                 }}>
                                                 Delete
                                             </button>

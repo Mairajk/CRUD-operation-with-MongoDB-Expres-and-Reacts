@@ -1,6 +1,25 @@
-.eachProduct{
-    border: 2px solid red;
+body {
+    background-color: whitesmoke;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.eachProduct {
+    background-color: white;
+    border: 0px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px 2px gray;
     width: fit-content;
-    padding: 20px;
-    margin: 20px;
+    padding: 20px 30px;
+    margin: 20px 50px;
+    width: 300px;
+}
+
+#description {
+    /* height: 200px ; */
+    /* text-align:; */
 }
