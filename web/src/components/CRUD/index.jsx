@@ -281,7 +281,7 @@ const CRUD = () => {
                 <h3>{responseMessage}</h3>
             </div>
             {
-                (searchData.length) ?
+                (searchData.length===0) ?
                     <div className='mainSearch'>
                         <h3> Search Results :</h3>
                         <div className="searchResult">
