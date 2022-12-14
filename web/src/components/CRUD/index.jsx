@@ -24,6 +24,7 @@ const CRUD = () => {
     const [load, setLoad] = useState(false);
     const [editingData, setEditingData] = useState({});
     const [searchText, setSearchText] = useState('');
+    const [searchData, setSearchData] = useState([]);
 
     // const [deleteId, setDeleteId] = useState(null);
 
@@ -189,13 +190,16 @@ const CRUD = () => {
 
         axios.get(`${baseURL}/products/${searchText}`)
             .then((res) => {
+                setSearchData([])
+                setSearchData(res.data.data);
+                console.log('searchData ====>', searchData);
                 console.log('response "all products" =========>: ', res.data);
-                // setResponseProducts(res.data.data.reverse());
-                // console.log('responseProducts :', responseProducts);
             })
             .catch((err) => {
                 console.log('Error: ', err);
             })
+
+        console.log(searchData, '<<<=================');
     }
 
 
@@ -276,7 +280,108 @@ const CRUD = () => {
                 }
                 <h3>{responseMessage}</h3>
             </div>
+            {
+                (searchData) ?
+                    <div className='mainSearch'>
+                        <h3> Search Results :</h3>
+                        <div className="searchResult">
 
+
+                            {searchData.map((eachProduct, i) => {
+
+                                return (
+                                    <div className="eachProduct" key={i}>
+
+                                        <p> {moment(eachProduct.date).fromNow()}</p>
+
+                                        {
+                                            (isEditing && eachProduct._id === editingData._id) ?
+
+                                                <div className="editingProduct">
+                                                    <form onSubmit={updateFormik.handleSubmit}>
+                                                        <div className="inputDiv">
+                                                            <label htmlFor="productName">Product name : </label>
+                                                            <input
+                                                                type="text"
+                                                                id="productName"
+                                                                value={updateFormik.values.productName}
+                                                                // value={eachProduct.name}
+                                                                placeholder="Enter you name :"
+                                                                onChange={updateFormik.handleChange}
+                                                            />
+                                                            {(updateFormik.touched.productName && Boolean(updateFormik.errors.productName)) ?
+                                                                <p className="inputError">{updateFormik.errors.productName}</p> : <p className="inputError"></p>}
+                                                        </div>
+
+                                                        <div className="inputDiv">
+                                                            <label htmlFor="price">Price : </label>
+                                                            <input
+                                                                type="number"
+                                                                id="price"
+                                                                value={updateFormik.values.price}
+                                                                // value={eachProduct.price}
+                                                                placeholder="Enter your Price :"
+                                                                onChange={updateFormik.handleChange}
+                                                            />
+                                                            {(updateFormik.touched.price && Boolean(updateFormik.errors.price)) ?
+                                                                <p className="inputError">{updateFormik.errors.price}</p> : <p className="inputError"></p>}
+                                                        </div>
+
+                                                        <div className="inputDiv">
+                                                            <label htmlFor="description">Description : </label>
+                                                            <input
+                                                                type="text"
+                                                                id="description"
+                                                                value={updateFormik.values.description}
+                                                                // value={eachProduct.description}
+                                                                placeholder="Enter your description :"
+                                                                onChange={updateFormik.handleChange}
+                                                            />
+                                                            {(updateFormik.touched.description && Boolean(updateFormik.errors.description)) ?
+                                                                <p className="inputError">{updateFormik.errors.description}</p> : <p className="inputError"></p>}
+                                                        </div>
+
+
+                                                        <button type="submit" >Save</button>
+                                                    </form>
+                                                    <button onClick={() => {
+                                                        setIsEditing(false);
+                                                    }}>Cancel</button>
+                                                </div>
+                                                :
+                                                <div>
+                                                    <p className="productname">{eachProduct.name}</p>
+                                                    <p className="productPrize">{eachProduct.price}</p>
+                                                    <p className="productDescription">{eachProduct.description}</p>
+
+                                                    <button
+                                                        className="editing"
+                                                        onClick={() => {
+                                                            // setIsEditing(true);
+                                                            // setEditingId(eachProduct.id)
+                                                            editProduct(eachProduct);
+                                                            console.log('editingData ===> ', editingData);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </button>
+
+                                                    <button className="delete"
+                                                        onClick={() => {
+                                                            deleteProduct(eachProduct._id);
+                                                        }}>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                        }
+                                    </div>
+                                )
+                            })}
+
+                        </div>
+                    </div>
+                    : null
+            }
             <div className="products">
                 {
                     responseProducts.map((eachProduct, i) => {
