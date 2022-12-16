@@ -192,6 +192,8 @@ const CRUD = () => {
             .then((res) => {
                 setSearchData([])
                 setSearchData(res.data.data);
+                // setSearchText('');
+                e.reset();
                 console.log('searchData ====>', searchData);
                 console.log('response "all products" =========>: ', res.data);
             })
@@ -211,6 +213,7 @@ const CRUD = () => {
                 <input
                     type="search"
                     placeholder='Search products'
+                    value={searchText}
                     name=""
                     id=""
                     onChange={(e) => {
@@ -280,12 +283,16 @@ const CRUD = () => {
                 }
                 <h3>{responseMessage}</h3>
             </div>
+
             {
-                (searchData) ?
+                (searchData.length) ?
                     <div className='mainSearch'>
                         <h3> Search Results :</h3>
-                        <div className="searchResult">
+                        <button onClick={() => {
+                            setSearchData([]);
+                        }}>x</button>
 
+                        <div className="searchResult">
 
                             {searchData.map((eachProduct, i) => {
 
@@ -487,8 +494,6 @@ const CRUD = () => {
                     })
                 }
             </div>
-
-
         </div>
     )
 }

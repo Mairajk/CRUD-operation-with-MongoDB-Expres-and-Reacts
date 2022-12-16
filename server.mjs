@@ -184,7 +184,7 @@ app.get('/products/:name', (req, res) => {
 
     let findName = req.params.name;
 
-    productModel.find({ name: findName }, (err, data) => {
+    productModel.find({ name: { $regex: `${findName}` } }, (err, data) => {
         if (!err) {
 
             if (data.length !== 0) {
